@@ -16,7 +16,7 @@ lerna-debug.log*
 .DS_Store
 
 # Sqlite
-.sqlite
+db.sqlite
 
 # Tests
 /test
