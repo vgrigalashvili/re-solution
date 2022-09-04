@@ -12,6 +12,8 @@ import { User } from './users/user.entity';
       type: 'sqlite',
       database: 'db.sqlite',
       entities: [User],
+
+      // Automatically updates structure of dat abase. (not recomended in production.)
       synchronize: true,
     }),
     UsersModule,
