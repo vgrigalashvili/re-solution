@@ -8,12 +8,17 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService, private jwt: JwtService) {}
+  constructor(
+    private usersService: UsersService,
+    private config: ConfigService,
+    private jwt: JwtService,
+  ) {}
 
   // @Service: User SignUp.
   async signUp(email: string, password: string) {
@@ -45,6 +50,21 @@ export class AuthService {
       throw new BadRequestException('Invalid credentials!');
     }
     // Return the user.
-    return user;
+    return this.signToken(user.id, user.email);
+  }
+
+  async signToken(
+    userId: number,
+    email: string,
+  ): Promise<{ access_token: string }> {
+    const payload = { id: userId, email: email };
+
+    const secret = this.config.get('JWT_SECRET');
+
+    const token = await this.jwt.signAsync(payload, {
+      expiresIn: '15m',
+      secret: secret,
+    });
+    return { access_token: token };
   }
 }

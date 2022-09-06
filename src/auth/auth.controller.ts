@@ -12,7 +12,6 @@ import { AuthService } from './auth.service';
 import { Serialize } from '../interceptors';
 
 @Controller('api/v1/auth')
-@Serialize(UserDto)
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -21,6 +20,7 @@ export class AuthController {
   // @route       : POST /api/v1/auth/signup.
   // @access      : Public.
   @Post('/signup')
+  @Serialize(UserDto)
   signeUp(@Body() body: CreateUserDto) {
     const { email, password } = body;
     const user = this.authService.signUp(email, password);
@@ -32,9 +32,8 @@ export class AuthController {
   // @route       : POST /api/v1/auth/signin.
   // @access      : Public.
   @Post('/signin')
-  signeIn(@Body() body: CreateUserDto) {
+  async signeIn(@Body() body: CreateUserDto) {
     const { email, password } = body;
-    const user = this.authService.signIn(email, password);
-    return user;
+    return await this.authService.signIn(email, password);
   }
 }
