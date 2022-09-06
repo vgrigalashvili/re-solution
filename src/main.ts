@@ -1,3 +1,10 @@
+/*
+ *
+ * Pimary file for the bootrap logic.
+ *
+ */
+
+// Dependencies.
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';

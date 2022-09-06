@@ -1,3 +1,10 @@
+/*
+ *
+ * User Entity.
+ *
+ */
+
+// Dependencies.
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

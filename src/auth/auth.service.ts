@@ -1,0 +1,50 @@
+/*
+ *
+ * auth Service.
+ *
+ */
+
+// Dependencies.
+import { BadRequestException, Injectable } from '@nestjs/common';
+import * as argon from 'argon2';
+import { JwtService } from '@nestjs/jwt';
+
+import { UsersService } from '../users/users.service';
+
+@Injectable()
+export class AuthService {
+  constructor(private usersService: UsersService, private jwt: JwtService) {}
+
+  // @Service: User SignUp.
+  async signUp(email: string, password: string) {
+    // Check if email is in use.
+    let user = await this.usersService.findByEmail(email);
+    if (user) {
+      throw new BadRequestException('email already taken!');
+    }
+    // Hash the users password.
+    const hash = await argon.hash(password);
+    // Create a new user and save.
+    user = await this.usersService.create(email, hash);
+    // Return the user.
+    return user;
+  }
+
+  // @Service: User SignIn.
+  async signIn(email: string, password: string) {
+    // Find the user by email.
+    const user = await this.usersService.findByEmail(email);
+    // If user does not exist throw an exepton.
+    if (!user) {
+      throw new BadRequestException('Invalid credentials!');
+    }
+    // Compare passwords.
+    const pwMatches = await argon.verify(user.password, password);
+    // If password incorrect trow exeption.
+    if (!pwMatches) {
+      throw new BadRequestException('Invalid credentials!');
+    }
+    // Return the user.
+    return user;
+  }
+}

@@ -1,3 +1,10 @@
+/*
+ *
+ * Serialize Interceptor.
+ *
+ */
+
+// Dependencies.
 import {
   NestInterceptor,
   ExecutionContext,
