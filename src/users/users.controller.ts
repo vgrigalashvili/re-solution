@@ -19,7 +19,7 @@ import {
 import { UpdateUserDto, UserDto } from './dto';
 import { UsersService } from './users.service';
 import { Serialize } from '../interceptors';
-import { JwtGuard } from './guard';
+import { JwtGuard, AdminGuard } from './guard';
 import { CurrentUser } from './decorator';
 
 @UseGuards(JwtGuard)
@@ -40,7 +40,8 @@ export class UsersController {
   // @desc        : Find user by id.
   // @Req. Data   : id
   // @route       : GET /api/v1/users/:id
-  // @access      : Private
+  // @access      : admin
+  @UseGuards(AdminGuard)
   @Get('/:id')
   async findById(@Param('id') id: string) {
     const user = await this.usersService.findById(parseInt(id));
@@ -53,7 +54,8 @@ export class UsersController {
   // @desc        : Find user by email.
   // @Req. Data   : email.
   // @route       : GET /api/v1/users/?email=
-  // @access      : Private.
+  // @access      : admin.
+  @UseGuards(AdminGuard)
   @Get()
   findByEmail(@Query('email') email: string) {
     return this.usersService.findByEmail(email);
@@ -62,7 +64,8 @@ export class UsersController {
   // @desc        : Delete user
   // @Req. Data   : id
   // @route       : DELETE /api/v1/users/:id
-  // @access      : Private
+  // @access      : admin
+  @UseGuards(AdminGuard)
   @Delete('/:id')
   removeUser(@Param('id') id: string) {
     return this.usersService.remove(parseInt(id));
