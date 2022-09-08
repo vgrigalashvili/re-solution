@@ -11,10 +11,11 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 import { User } from './user.entity';
+import { JwtStrategy } from './strategy';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, JwtStrategy],
 })
 export class UsersModule {}
