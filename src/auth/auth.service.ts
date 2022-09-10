@@ -50,14 +50,15 @@ export class AuthService {
       throw new BadRequestException('Invalid credentials!');
     }
     // Return the user.
-    return this.signToken(user.id, user.email);
+    return this.signToken(user.id, user.email, user.role);
   }
 
   async signToken(
     userId: number,
     email: string,
+    role: string,
   ): Promise<{ access_token: string }> {
-    const payload = { id: userId, email: email };
+    const payload = { id: userId, email: email, role: role };
 
     const secret = this.config.get('JWT_SECRET');
 
