@@ -28,7 +28,7 @@ export class UsersService {
     return this.repo.save(user);
   }
 
-  // @Service: Find user by ID.
+  // @Service: Count users.
   countUsers() {
     return this.repo.count();
   }
