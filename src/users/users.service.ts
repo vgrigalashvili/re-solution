@@ -16,10 +16,21 @@ export class UsersService {
   constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
   // @Service: Create user.
-  create(email: string, password: string) {
+  async create(email: string, password: string) {
     const user = this.repo.create({ email, password });
 
+    // Check if this is the first user.
+    const isFirstUser = await this.countUsers();
+
+    // If first, set role to admin.
+    isFirstUser === 0 ? (user.role = 'admin') : 'user';
+
     return this.repo.save(user);
+  }
+
+  // @Service: Find user by ID.
+  countUsers() {
+    return this.repo.count();
   }
 
   // @Service: Find user by ID.
@@ -36,7 +47,7 @@ export class UsersService {
   async update(id: number, attrs: Partial<User>) {
     const user = await this.findById(id);
     if (!user) {
-      throw new NotFoundException('user not found!');
+      throw new NotFoundException('User not found!');
     }
     Object.assign(user, attrs);
 
