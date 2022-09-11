@@ -19,7 +19,7 @@ import {
 import { UpdateUserDto, UserDto } from './dto';
 import { UsersService } from './users.service';
 import { Serialize } from '../interceptors';
-import { JwtGuard, AdminGuard } from './guard';
+import { JwtGuard, AdminGuard, UpdateGuard } from './guard';
 import { CurrentUser } from './decorator';
 
 @UseGuards(JwtGuard)
@@ -72,9 +72,10 @@ export class UsersController {
   }
 
   // @desc        : Update user details.
-  // @Req. Data   : id && opt: email || password
+  // @Req. Data   : id && opt: email
   // @route       : PATCH /api/v1/users/:id
-  // @access      : Private
+  // @access      : Admin / Private
+  @UseGuards(UpdateGuard)
   @Patch('/:id')
   updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
     return this.usersService.update(parseInt(id), body);
