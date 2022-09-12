@@ -21,7 +21,7 @@ export class AuthController {
   // @access      : Public.
   @Post('/signup')
   @Serialize(UserDto)
-  signeUp(@Body() body: CreateUserDto) {
+  signUp(@Body() body: CreateUserDto) {
     const { email, password } = body;
     const user = this.authService.signUp(email, password);
     return user;
@@ -32,7 +32,7 @@ export class AuthController {
   // @route       : POST /api/v1/auth/signin.
   // @access      : Public.
   @Post('/signin')
-  async signeIn(@Body() body: CreateUserDto) {
+  async signIn(@Body() body: CreateUserDto) {
     const { email, password } = body;
     return await this.authService.signIn(email, password);
   }
