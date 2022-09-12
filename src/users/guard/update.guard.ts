@@ -13,9 +13,9 @@ export class UpdateGuard implements CanActivate {
   async canActivate(ctx: ExecutionContext) {
     const request = ctx.switchToHttp().getRequest();
 
-    const id = await this.usersService.findById(parseInt(request.params.id));
+    const user = await this.usersService.findById(parseInt(request.params.id));
 
-    if (id === null) {
+    if (user === null) {
       throw new BadRequestException('User not found!');
     }
 
@@ -23,7 +23,7 @@ export class UpdateGuard implements CanActivate {
       return false;
     }
 
-    if (request.user.id === id || request.user.role === 'admin') {
+    if (request.user.id === user.id || request.user.role === 'admin') {
       return true;
     } else {
       return false;

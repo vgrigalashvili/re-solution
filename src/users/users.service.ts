@@ -6,6 +6,9 @@
 
 // Dependencies.
 import { Injectable, NotFoundException } from '@nestjs/common';
+import * as argon from 'argon2';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -13,7 +16,11 @@ import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private repo: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private repo: Repository<User>,
+    private config: ConfigService,
+    private jwtService: JwtService,
+  ) {}
 
   // @Service: Create user.
   async create(email: string, password: string) {
@@ -49,6 +56,10 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found!');
     }
+    if (attrs.password) {
+      attrs.password = await argon.hash(attrs.password);
+    }
+
     Object.assign(user, attrs);
 
     return this.repo.save(user);
