@@ -4,7 +4,7 @@
  *
  */
 
-// Dependencies.
+// ! Dependencies.
 import {
   Body,
   Controller,
@@ -27,20 +27,21 @@ import { CurrentUser } from './decorator';
 @Serialize(UserDto)
 export class UsersController {
   constructor(private usersService: UsersService) {}
-
-  // @desc        : Get current user info.
-  // @Req. Data   : me
-  // @route       : GET /api/v1/users/me
-  // @access      : Private
+  /**
+   * * @Desc        : Get current user info.
+   * * @Req. Data   : me
+   * * @Route       : GET /api/v1/users/me
+   * * @Access      : Private
+   */
   @Get('/me')
   async getMe(@CurrentUser() user: UserDto) {
     return user;
   }
 
-  // @desc        : Find user by id.
-  // @Req. Data   : id
-  // @route       : GET /api/v1/users/:id
-  // @access      : admin
+  // * @Desc        : Find user by id.
+  // * @Req. Data   : id
+  // * @Route       : GET /api/v1/users/:id
+  // * @Access      : admin
   @UseGuards(AdminGuard)
   @Get('/:id')
   async findById(@Param('id') id: string) {
@@ -51,30 +52,30 @@ export class UsersController {
     return user;
   }
 
-  // @desc        : Find user by email.
-  // @Req. Data   : email.
-  // @route       : GET /api/v1/users/?email=
-  // @access      : admin.
+  // * @Desc        : Find user by email.
+  // * @Req. Data   : email.
+  // * @Route       : GET /api/v1/users/?email=
+  // * @Access      : admin.
   @UseGuards(AdminGuard)
   @Get()
   findByEmail(@Query('email') email: string) {
     return this.usersService.findByEmail(email);
   }
 
-  // @desc        : Delete user
-  // @Req. Data   : id
-  // @route       : DELETE /api/v1/users/:id
-  // @access      : admin
+  // * @Desc        : Delete user
+  // * @Req. Data   : id
+  // * @Route       : DELETE /api/v1/users/:id
+  // * @Access      : admin
   @UseGuards(AdminGuard)
   @Delete('/:id')
   removeUser(@Param('id') id: string) {
     return this.usersService.remove(parseInt(id));
   }
 
-  // @desc        : Update user details.
-  // @Req. Data   : id && opt: email
-  // @route       : PATCH /api/v1/users/:id
-  // @access      : Admin / Private
+  // * @Desc        : Update user details.
+  // * @Req. Data   : id && opt: email
+  // * @Route       : PATCH /api/v1/users/:id
+  // * @Access      : Admin / Private
   @UseGuards(UpdateGuard)
   @Patch('/:id')
   updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {

@@ -4,8 +4,8 @@
  *
  */
 
-// Dependencies.
-import { Body, Controller, Post } from '@nestjs/common';
+// ! Dependencies.
+import { Body, Controller, Post, Get } from '@nestjs/common';
 
 import { CreateUserDto, UserDto } from '../users/dto';
 import { AuthService } from './auth.service';
@@ -15,10 +15,10 @@ import { Serialize } from '../interceptors';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // @desc        : User signup.
-  // @Req. Data   : email, password.
-  // @route       : POST /api/v1/auth/signup.
-  // @access      : Public.
+  // * @Desc        : User signUp.
+  // ! @Req. Data   : email, password.
+  // ! @Route       : POST /api/v1/auth/signup.
+  // * @Access      : Public.
   @Post('/signup')
   @Serialize(UserDto)
   signUp(@Body() body: CreateUserDto) {
@@ -27,13 +27,23 @@ export class AuthController {
     return user;
   }
 
-  // @desc        : User signup.
-  // @Req. Data   : email, password.
-  // @route       : POST /api/v1/auth/signin.
-  // @access      : Public.
+  // * @Desc        : User signIn.
+  // ! @Req. Data   : email, password.
+  // ! @Route       : POST /api/v1/auth/signin.
+  // * @Access      : Public.
   @Post('/signin')
   async signIn(@Body() body: CreateUserDto) {
     const { email, password } = body;
     return await this.authService.signIn(email, password);
+  }
+
+  // * @Desc        : User signOut.
+  // ! @Req. Data   : email, password.
+  // ! @Route       : POST /api/v1/auth/signOut.
+  // * @Access      : Public.
+  // TODO: implement signOut method.
+  @Get('/signout')
+  async signOut(@Body() body: any) {
+    console.log(body);
   }
 }

@@ -4,7 +4,7 @@
  *
  */
 
-// Dependencies.
+// ! Dependencies.
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -45,7 +45,7 @@ import { User } from './users/user.entity';
           tls: {
             ciphers: config.get('MAILER_SEC'),
           },
-          secure: false, // true for 465, false for other ports
+          secure: false, // * true for 465, false for other ports
           auth: {
             user: config.get('MAILER_USER'),
             pass: config.get('MAILER_PASS'),

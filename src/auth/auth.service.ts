@@ -4,7 +4,7 @@
  *
  */
 
-// Dependencies.
+// ! Dependencies.
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
@@ -22,23 +22,24 @@ export class AuthService {
     private readonly mailerService: MailerService,
   ) {}
 
-  // @Service: User SignUp.
+  // * @Method: User SignUp.
   async signUp(email: string, password: string) {
-    // Check if email is in use.
+    // ! Check if email is in use.
     let user = await this.usersService.findByEmail(email);
     if (user) {
       throw new BadRequestException('Email already taken!');
     }
-    // Hash the users password.
+    // ! Hash the users password.
     const hash = await argon.hash(password);
-    // Create a new user and save.
+
+    // ! Create a new user and save.
     user = await this.usersService.create(email, hash);
 
     // Temporary, for testing purposes.
     this.mailerService
       .sendMail({
         to: user.email, // list of receivers
-        text: 'Welcome to re:solution', // plaintext body
+        // text: 'Welcome to re:solution', // plaintext body
         html: '<b>Welcome to re:solution</b>', // HTML body content
       })
       .then(() => {
@@ -48,28 +49,31 @@ export class AuthService {
         console.log('Error:', ex);
       });
 
-    // Return the user.
     return user;
   }
 
-  // @Service: User SignIn.
+  // * @Method: User SignIn.
   async signIn(email: string, password: string) {
-    // Find the user by email.
+    // ! Find the user by email.
     const user = await this.usersService.findByEmail(email);
-    // If user does not exist throw an exception.
+
+    // ! If user does not exist throw an exception.
     if (!user) {
       throw new BadRequestException('Invalid credentials!');
     }
-    // Compare passwords.
+
+    // ! Compare passwords.
     const pwMatches = await argon.verify(user.password, password);
-    // If password incorrect trow exception.
+
+    // ! If password incorrect trow exception.
     if (!pwMatches) {
       throw new BadRequestException('Invalid credentials!');
     }
-    // Return the user.
+    // ! Return the users signed token.
     return this.signToken(user.id, user.email, user.role);
   }
 
+  // * @Method: signToken.
   async signToken(
     userId: number,
     email: string,
