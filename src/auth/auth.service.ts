@@ -39,7 +39,7 @@ export class AuthService {
     this.mailerService
       .sendMail({
         to: user.email, // list of receivers
-        // text: 'Welcome to re:solution', // plaintext body
+        // ? text: 'Welcome to re:solution', // plaintext body
         html: '<b>Welcome to re:solution</b>', // HTML body content
       })
       .then(() => {
@@ -69,8 +69,11 @@ export class AuthService {
     if (!pwMatches) {
       throw new BadRequestException('Invalid credentials!');
     }
+
+    const access_token = await this.signToken(user.id, user.email, user.role);
+
     // ! Return the users signed token.
-    return this.signToken(user.id, user.email, user.role);
+    return { userId: user.id, accessToken: access_token };
   }
 
   // * @Method: signToken.
@@ -78,15 +81,15 @@ export class AuthService {
     userId: number,
     email: string,
     role: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<string> {
     const payload = { id: userId, email: email, role: role };
 
     const secret = this.config.get('JWT_SECRET');
 
     const token = await this.jwt.signAsync(payload, {
-      expiresIn: '15m',
+      expiresIn: '1d',
       secret: secret,
     });
-    return { access_token: token };
+    return token;
   }
 }

@@ -15,6 +15,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { plainToInstance } from 'class-transformer';
 
+// ! To make sure that whatever we pass to it must be a class.
 interface ClassConstructor {
   new (...args: any[]): unknown;
 }

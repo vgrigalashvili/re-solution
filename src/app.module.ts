@@ -7,6 +7,7 @@
 // ! Dependencies.
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
@@ -17,6 +18,8 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './users/user.entity';
+import { Url } from './url-mon/url.entity';
+import { UrlMonModule } from './url-mon/url-mon.module';
 
 @Module({
   imports: [
@@ -24,15 +27,16 @@ import { User } from './users/user.entity';
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
-
+    TypeOrmModule.forRootAsync({}),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         return {
           type: 'sqlite',
           database: config.get<string>('DB_NAME'),
-          entities: [User],
-          synchronize: true,
+          autoLoadEntities: false, // ? Set to true to automatically load entities.
+          entities: [User, Url],
+          synchronize: true, // ? Must be set to false when app running in production mode.
         };
       },
     }),
@@ -66,8 +70,15 @@ import { User } from './users/user.entity';
     }),
     UsersModule,
     AuthModule,
+    UrlMonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  // ! DataSource and EntityManager objects will be available to inject across the entire project (without needing to import any modules).
+  constructor(
+    private configService: ConfigService,
+    private dataSource: DataSource,
+  ) {}
+}

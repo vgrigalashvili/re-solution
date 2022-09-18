@@ -7,9 +7,7 @@
 // ! Dependencies.
 import { Injectable, NotFoundException } from '@nestjs/common';
 import * as argon from 'argon2';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from './user.entity';
@@ -17,14 +15,13 @@ import { User } from './user.entity';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private repo: Repository<User>,
-    private config: ConfigService,
-    private jwtService: JwtService,
+    @InjectRepository(User) private userRepo: Repository<User>,
+    private dataSource: DataSource, // ! To handle TypeORM transactions.
   ) {}
 
   // * @Method  : Create user.
   async create(email: string, password: string) {
-    const user = this.repo.create({ email, password });
+    const user = this.userRepo.create({ email, password });
 
     // ! Check if this is the first user.
     const isFirstUser = await this.countUsers();
@@ -32,22 +29,22 @@ export class UsersService {
     // ! If first, set role to admin.
     isFirstUser === 0 ? (user.role = 'admin') : 'user';
 
-    return this.repo.save(user);
+    return this.userRepo.save(user);
   }
 
   // * @Method  : Count users.
   countUsers() {
-    return this.repo.count();
+    return this.userRepo.count();
   }
 
   // * @Method : Find user by ID.
   findById(id: number) {
-    return this.repo.findOne({ where: { id: id } });
+    return this.userRepo.findOne({ where: { id: id } });
   }
 
   // * @Method : Find user by email.
   findByEmail(email: string) {
-    return this.repo.findOne({ where: { email: email } });
+    return this.userRepo.findOne({ where: { email: email } });
   }
 
   // * @Method  : Update user details.
@@ -62,7 +59,7 @@ export class UsersService {
 
     Object.assign(user, attrs);
 
-    return this.repo.save(user);
+    return this.userRepo.save(user);
   }
 
   // * @Method  : Delete user.
@@ -73,6 +70,6 @@ export class UsersService {
       throw new NotFoundException('User not found!');
     }
 
-    return this.repo.remove(user);
+    return this.userRepo.remove(user);
   }
 }

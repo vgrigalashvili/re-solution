@@ -18,7 +18,7 @@ import {
 } from '@nestjs/common';
 import { UpdateUserDto, UserDto } from './dto';
 import { UsersService } from './users.service';
-import { Serialize } from '../interceptors';
+import { Serialize } from '../interceptor';
 import { JwtGuard, AdminGuard, UpdateGuard } from './guard';
 import { CurrentUser } from './decorator';
 
@@ -27,12 +27,11 @@ import { CurrentUser } from './decorator';
 @Serialize(UserDto)
 export class UsersController {
   constructor(private usersService: UsersService) {}
-  /**
-   * * @Desc        : Get current user info.
-   * * @Req. Data   : me
-   * * @Route       : GET /api/v1/users/me
-   * * @Access      : Private
-   */
+
+  // * @Desc        : Get current user info.
+  // * @Req. Data   : me
+  // * @Route       : GET /api/v1/users/me
+  // * @Access      : Private
   @Get('/me')
   async getMe(@CurrentUser() user: UserDto) {
     return user;

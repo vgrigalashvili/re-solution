@@ -5,11 +5,11 @@
  */
 
 // ! Dependencies.
-import { Body, Controller, Post, Get } from '@nestjs/common';
+import { Body, Controller, Post, Get, Request } from '@nestjs/common';
 
 import { CreateUserDto, UserDto } from '../users/dto';
 import { AuthService } from './auth.service';
-import { Serialize } from '../interceptors';
+import { Serialize } from '../interceptor';
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -21,9 +21,10 @@ export class AuthController {
   // * @Access      : Public.
   @Post('/signup')
   @Serialize(UserDto)
-  signUp(@Body() body: CreateUserDto) {
+  async signUp(@Body() body: CreateUserDto) {
     const { email, password } = body;
-    const user = this.authService.signUp(email, password);
+    const user = await this.authService.signUp(email, password);
+
     return user;
   }
 
@@ -34,7 +35,9 @@ export class AuthController {
   @Post('/signin')
   async signIn(@Body() body: CreateUserDto) {
     const { email, password } = body;
-    return await this.authService.signIn(email, password);
+    const user = await this.authService.signIn(email, password);
+
+    return user;
   }
 
   // * @Desc        : User signOut.
@@ -43,7 +46,7 @@ export class AuthController {
   // * @Access      : Public.
   // TODO: implement signOut method.
   @Get('/signout')
-  async signOut(@Body() body: any) {
-    console.log(body);
+  async signOut(@Request() request: any) {
+    console.log(request.headers.authorization);
   }
 }
